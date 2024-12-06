@@ -9,19 +9,22 @@ const ChatMessages = ({
   message,
   setMessage,
   sendMessage,
-}) => {
+})  => {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  };
+  };  
+  
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages]); 
 
+  console.log( currentChat,
+    +'chatpage')
   return (
     <Box padding={2} flexGrow={1} display="flex" flexDirection="column">
       <Typography variant="h6" gutterBottom>

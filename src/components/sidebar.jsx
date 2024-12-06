@@ -11,7 +11,9 @@ import {
 } from "@mui/material";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 
-const Sidebar = ({
+
+
+const Sidebar = ({ 
   userInfo,
   rooms,
   users,
@@ -20,9 +22,18 @@ const Sidebar = ({
   joinRoom,
   selectUser,
   createRoom,
-}) => {
+}) =>   
+  {
+
+    // console.log(userInfo+"userinfo");
+    // console.log(selectUser+"userinfo");
+    // console.log(rooms)
   return (
+    
+   <>
+  
     <Box padding={2}>
+      
       <Box
         sx={{
           display: "flex",
@@ -51,10 +62,12 @@ const Sidebar = ({
       </Box>
 
       <List>
-        {rooms.map((room) => (
+        {rooms.map((room) => ( 
+        
           <ListItem
             button
-            key={room?.id}
+            key={room?.id} 
+            
             onClick={() => joinRoom(room)}
             sx={{
               backgroundColor: currentChat?.id === room?.id ? "#F1F0E8" : "",
@@ -62,14 +75,19 @@ const Sidebar = ({
           >
             <ListItemText primary={room?.name} sx={{ cursor: "pointer" }} />
           </ListItem>
-        ))}
+        )) 
+        }
+         
+    
       </List>
-
+      
+     
       <Typography variant="h6">Users</Typography>
       <List>
         {users
           .filter((user) => user.id !== userId)
           .map((user) => (
+            // console.log(users),
             <ListItem
               button
               key={user?.id}
@@ -83,7 +101,9 @@ const Sidebar = ({
           ))}
       </List>
     </Box>
+    </>
   );
 };
+
 
 export default Sidebar;

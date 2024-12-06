@@ -22,12 +22,11 @@ import axios from "axios";
 import Sidebar from "./components/sidebar";
 import ChatMessages from "./components/chatpage";
 
-const isProduction = window.location.hostname !== "localhost";
-const backendURL = isProduction
-  ? "http://192.168.100.186:5000"
-  : "http://localhost:5000";
 
+const backendURL = "http://192.168.100.186:5000";
+ 
 const socket = io(backendURL);
+// console.log(socket)
 
 function App() {
   const messagesEndRef = useRef(null);
@@ -136,8 +135,10 @@ function App() {
     if (roomName) {
       axios
         .post(`${backendURL}/rooms`, { name: roomName })
+
         .catch((error) => console.error("Error creating room:", error));
     }
+    // console.log(roomName)
   };
 
   const sendMessage = () => {
@@ -269,7 +270,7 @@ function App() {
         </DialogContent>
         <DialogActions>
           <Button onClick={registerUser} color="primary" disabled={!userName}>
-            Register
+            Register 
           </Button>
         </DialogActions>
       </Dialog>
