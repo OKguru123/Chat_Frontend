@@ -9,22 +9,25 @@ const ChatMessages = ({
   message,
   setMessage,
   sendMessage,
-})  => {
+}) => {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  };  
-  
+  };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]); 
+  }, [messages]);
 
-  console.log( currentChat,
-    +'chatpage')
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  };
+
   return (
     <Box padding={2} flexGrow={1} display="flex" flexDirection="column">
       <Typography variant="h6" gutterBottom>
@@ -94,6 +97,7 @@ const ChatMessages = ({
           placeholder="Type a message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
         />
         <Button
           variant="contained"

@@ -22,11 +22,9 @@ import axios from "axios";
 import Sidebar from "./components/sidebar";
 import ChatMessages from "./components/chatpage";
 
-
 const backendURL = "http://192.168.100.186:5000";
- 
+
 const socket = io(backendURL);
-// console.log(socket)
 
 function App() {
   const messagesEndRef = useRef(null);
@@ -37,10 +35,19 @@ function App() {
   const [rooms, setRooms] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [message, setMessage] = useState("");
+
   const [messages, setMessages] = useState([]);
+  const [isregis, setIsregis] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  // Logout usestate
+  // const[is]
+
   const [openDialog, setOpenDialog] = useState(
     !localStorage.getItem("userInfo")
   );
+
+  const [token, setToken] = useState(localStorage.getItem("token"));
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const theme = useTheme();
@@ -51,14 +58,22 @@ function App() {
 
     if (storedUserInfo) {
       setUserInfo(storedUserInfo);
+
       setUserId(storedUserInfo.id);
+
       setUserName(storedUserInfo.name);
     }
     if (storedUserInfo && storedUserInfo?.id) {
       registerUser();
     }
-    axios.get(`${backendURL}/rooms`).then((res) => setRooms(res.data));
-    axios.get(`${backendURL}/users`).then((res) => setUsers(res.data));
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = token
+        ? `Bearer ${token}`
+        : "";
+
+      axios.get(`${backendURL}/rooms`).then((res) => setRooms(res.data));
+      axios.get(`${backendURL}/users`).then((res) => setUsers(res.data));
+    }
 
     if (storedUserInfo && currentChat) {
       axios
@@ -66,6 +81,7 @@ function App() {
           params: {
             sender_id: storedUserInfo.id,
             recipient_id: currentChat?.type === "user" ? currentChat?.id : "",
+            // ye kab store hui ?
             room_id: currentChat?.type === "room" ? currentChat?.id : "",
           },
         })
@@ -88,38 +104,20 @@ function App() {
       socket.off("receive_private_message");
       socket.off("receive_room_message");
     };
-  }, [socket.id, currentChat]);
+  }, [socket, currentChat, token]);
 
   useEffect(() => {}, [userInfo]);
 
-  const registerUser = () => {
-    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-    axios
-      .post(`${backendURL}/users`, {
-        userId: storedUserInfo?.id,
-        name: storedUserInfo ? storedUserInfo.name : userName,
-        socketId: socket.id,
-      })
-      .then((res) => {
-        const userData = {
-          id: res.data.id,
-          name: res.data.name,
-        };
-
-        if (!storedUserInfo?.id) {
-          setUserId(userData.id);
-          setUserName(userData.name);
-          setOpenDialog(false);
-          socket.emit("register_user", userData);
-        }
-        setUserInfo(userData);
-        localStorage.setItem("userInfo", JSON.stringify(userData));
-      })
-      .catch((error) => console.error("Error registering user:", error));
-  };
   const joinRoom = (room) => {
     setCurrentChat({ type: "room", ...room });
     socket.emit("join_room", { roomId: room.id, userId });
+    setMessages([]);
+    setDrawerOpen(false);
+  };
+
+  const joinRoomChat = (room) => {
+    setCurrentChat({ type: "room", ...room });
+    socket.emit("join_room_chat", { roomId: room.id });
     setMessages([]);
     setDrawerOpen(false);
   };
@@ -133,12 +131,14 @@ function App() {
   const createRoom = () => {
     const roomName = prompt("Enter room name");
     if (roomName) {
+      axios.defaults.headers.common["Authorization"] = token
+        ? `Bearer ${token}`
+        : "";
       axios
-        .post(`${backendURL}/rooms`, { name: roomName })
+        .post(`${backendURL}/rooms`, { name: roomName, sender_id: userId })
 
         .catch((error) => console.error("Error creating room:", error));
     }
-    // console.log(roomName)
   };
 
   const sendMessage = () => {
@@ -179,11 +179,69 @@ function App() {
     scrollToBottom();
   }, [messages]);
 
+  const registerUser = () => {
+    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    axios
+      .post(`${backendURL}/users`, {
+        userId: storedUserInfo?.id,
+        name: storedUserInfo ? storedUserInfo.name : userName,
+        socketId: socket.id,
+        email: storedUserInfo ? storedUserInfo.email : email,
+        password: password,
+      })
+      .then((res) => {
+        setPassword("");
+        if (!storedUserInfo) {
+          setIsregis(false);
+          setOpenDialog(true);
+        }
+      })
+      .catch((error) => console.error("Error registering user:", error));
+  };
+
+  const LoginUser = (e) => {
+    const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+    e.preventDefault();
+
+    axios
+      .post(`${backendURL}/login`, {
+        socketId: socket.id,
+        email: email,
+        password: password,
+      })
+      .then((res) => {
+        const userData = {
+          id: res.data.user.id,
+          name: res.data.user.name,
+          email: res.data.user.email,
+        };
+
+        if (!storedUserInfo?.id) {
+          setUserId(userData.id);
+          setUserName(userData.name);
+          setOpenDialog(false);
+          setEmail(userData.email);
+        }
+        setUserInfo(userData);
+        setToken(res.data.token);
+        localStorage.setItem("token", res.data.token);
+
+        localStorage.setItem("userInfo", JSON.stringify(userData));
+      })
+      .catch((error) => {
+        console.error(
+          "login failed",
+          error.response ? error.response.data : error.message
+        );
+      });
+  };
+
   return (
     <>
       <Box display="flex" height="98vh">
         {!isMobile && (
-          <Box width="300px" borderRight="1px solid #ddd">
+          <Box width="400px" borderRight="1px solid #ddd">
             <Sidebar
               userInfo={userInfo}
               rooms={rooms}
@@ -193,6 +251,8 @@ function App() {
               joinRoom={joinRoom}
               selectUser={selectUser}
               createRoom={createRoom}
+              joinRoomChat={joinRoomChat}
+              setToken={setToken}
             />
           </Box>
         )}
@@ -212,6 +272,9 @@ function App() {
               joinRoom={joinRoom}
               selectUser={selectUser}
               createRoom={createRoom}
+              joinRoomChat={joinRoomChat}
+              token={token}
+              setToken={setToken}
             />
           </Drawer>
         )}
@@ -255,25 +318,107 @@ function App() {
           />
         </Box>
       </Box>
+      {/* changes in opendialog registration */}
 
-      <Dialog open={openDialog}>
-        <DialogTitle>Register</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="User Name"
-            fullWidth
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={registerUser} color="primary" disabled={!userName}>
-            Register 
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* 
+
+// {/* creating a Login Page of Dialog  */}
+
+      {isregis ? (
+        <Dialog open={isregis}>
+          <DialogTitle>Register</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="User Name"
+              fullWidth
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Email"
+              fullWidth
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Password"
+              fullWidth
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                setIsregis(false);
+                setOpenDialog(true);
+              }}
+              color="primary"
+            >
+              <span>allready have account ? </span>
+            </Button>
+
+            <Button
+              onClick={registerUser}
+              color="primary"
+              disabled={!(userName && password && email)}
+            >
+              Register
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : (
+        <Dialog open={openDialog}>
+          <DialogTitle>Login</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Email"
+              fullWidth
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              label="password"
+              fullWidth
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={LoginUser}
+              color="primary"
+              disabled={!(email && password)}
+            >
+              Login
+            </Button>
+            <Button
+              onClick={() => {
+                setOpenDialog(false);
+                setIsregis(true);
+              }}
+              color="primary"
+            >
+              <span>Don't have an account ? </span>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </>
   );
 }
