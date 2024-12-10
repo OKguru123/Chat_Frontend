@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+// import LogOut from "./components/LogOut";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   AppBar,
   Toolbar,
@@ -21,10 +24,12 @@ import io from "socket.io-client";
 import axios from "axios";
 import Sidebar from "./components/sidebar";
 import ChatMessages from "./components/chatpage";
+import LogOut from "./components/LogOut";
 
 const backendURL = "http://192.168.100.186:5000";
 
 const socket = io(backendURL);
+console.log(socket);
 
 function App() {
   const messagesEndRef = useRef(null);
@@ -40,6 +45,9 @@ function App() {
   const [isregis, setIsregis] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [ismobil, setIsMobil] = useState("");
+  const [isLogoutshow, setIsLogoutShow] = useState(false);
+
   // Logout usestate
   // const[is]
 
@@ -66,6 +74,7 @@ function App() {
     if (storedUserInfo && storedUserInfo?.id) {
       registerUser();
     }
+
     if (token) {
       axios.defaults.headers.common["Authorization"] = token
         ? `Bearer ${token}`
@@ -88,7 +97,7 @@ function App() {
         .then((res) => setMessages(res.data));
     }
 
-    socket.on("new_user", (user) => setUsers((prev) => [...prev, user]));
+    // socket.on("new_user", (user) => setUsers((prev) => [...prev, user]));
     socket.on("new_room", (room) => setRooms((prev) => [...prev, room]));
     socket.on("receive_private_message", (msg) =>
       setMessages((prev) => [...prev, msg])
@@ -195,9 +204,13 @@ function App() {
         if (!storedUserInfo) {
           setIsregis(false);
           setOpenDialog(true);
+          toast.success(`Registration successful! Welcome, ${userName}`);
         }
       })
-      .catch((error) => console.error("Error registering user:", error));
+      .catch((error) => {
+        toast.error("Registration failed");
+        console.error("Error registering user:", error);
+      });
   };
 
   const LoginUser = (e) => {
@@ -228,17 +241,28 @@ function App() {
         localStorage.setItem("token", res.data.token);
 
         localStorage.setItem("userInfo", JSON.stringify(userData));
+
+        toast.success(`Login successful! Welcome, ${userName}`);
       })
       .catch((error) => {
+        toast.error("Login failed! Please try again.");
         console.error(
           "login failed",
           error.response ? error.response.data : error.message
         );
       });
   };
-
+  console.log("ismibile", isMobile);
+  const handleHovermobile = () => {
+    // alert("mobile ui");
+    setIsLogoutShow(true);
+  };
+  const handleMouseLeaveMobi = () => {
+    setIsLogoutShow(false);
+  };
   return (
     <>
+      <ToastContainer />
       <Box display="flex" height="98vh">
         {!isMobile && (
           <Box width="400px" borderRight="1px solid #ddd">
@@ -252,7 +276,13 @@ function App() {
               selectUser={selectUser}
               createRoom={createRoom}
               joinRoomChat={joinRoomChat}
+              token={token}
               setToken={setToken}
+              setUserInfo={setUserInfo}
+              setOpenDialog={setOpenDialog}
+              ismobil={false}
+              setIsLogoutShow={setIsLogoutShow}
+              isLogoutshow={isLogoutshow}
             />
           </Box>
         )}
@@ -275,11 +305,26 @@ function App() {
               joinRoomChat={joinRoomChat}
               token={token}
               setToken={setToken}
+              setUserInfo={setUserInfo}
+              setOpenDialog={setOpenDialog}
+              ismobil={true}
+              setIsLogoutShow={setIsLogoutShow}
+              isLogoutshow={isLogoutshow}
             />
           </Drawer>
         )}
 
         <Box flexGrow={1} display="flex" flexDirection="column">
+          {isMobile ? (
+            <LogOut
+              setOpenDialog={setOpenDialog}
+              isLogoutshow={isLogoutshow}
+              setToken={setToken}
+              setUserInfo={setUserInfo}
+            />
+          ) : (
+            ""
+          )}
           {isMobile && (
             <AppBar position="static">
               <Toolbar>
@@ -299,7 +344,12 @@ function App() {
                   }}
                 >
                   <Typography variant="h6">Chat App</Typography>
-                  <Avatar sx={{ bgcolor: "#FF5722" }}>
+                  <Avatar
+                    // onMouseLeave={handleMouseLeaveMobi}
+                    sx={{ bgcolor: "#FF5722" }}
+                    onMouseEnter={handleHovermobile}
+                    style={{ cursor: "pointer" }}
+                  >
                     {userInfo?.name?.charAt(0)}
                   </Avatar>
                 </Box>
@@ -319,11 +369,9 @@ function App() {
         </Box>
       </Box>
       {/* changes in opendialog registration */}
-
       {/* 
 
 // {/* creating a Login Page of Dialog  */}
-
       {isregis ? (
         <Dialog open={isregis}>
           <DialogTitle>Register</DialogTitle>

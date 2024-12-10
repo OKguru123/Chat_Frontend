@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import LogOut from "./LogOut";
 import {
   Box,
   Avatar,
@@ -10,7 +11,6 @@ import {
   Tooltip,
 } from "@mui/material";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import { pink } from "@mui/material/colors";
 
 const Sidebar = ({
   userInfo,
@@ -24,10 +24,15 @@ const Sidebar = ({
   createRoom,
   token,
   setToken,
+  setUserInfo,
+  setOpenDialog,
+  ismobil,
+  isLogoutshow,
+  setIsLogoutShow,
 }) => {
   const [joinedRooms, setJoinedRooms] = useState([]);
   const [otherRooms, serOtherRooms] = useState([]);
-  const [isLogoutshow, setIsLogoutShow] = useState(false);
+  // const [isLogoutshow, setIsLogoutShow] = useState(false);
 
   useEffect(() => {
     setJoinedRooms(
@@ -50,46 +55,25 @@ const Sidebar = ({
   };
   const Logoutuser = () => {
     localStorage.clear();
-    setToken(null);
+    setToken("");
+    setUserInfo(null);
+    setOpenDialog(true);
   };
+  console.log("is mobile ", ismobil);
 
   return (
     <>
       <Box padding={2} onMouseLeave={handleMouseLeave}>
-        {/* Logout page */}
-
-        <div
-          style={{
-            left: isLogoutshow ? "0px" : "-300px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            marginTop: "10px",
-            width: "300px",
-            height: "50px",
-            transition: "300ms",
-
-            zIndex: "1000",
-          }}
-          onMouseLeave={handleMouseLeave}
-        >
-          <button
-            style={{
-              padding: "10px 20px",
-              fontSize: "16px",
-              backgroundColor: "#FF5722",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}
-            onClick={Logoutuser}
-          >
-            Logout
-          </button>
-        </div>
+        {!ismobil ? (
+          <LogOut
+            setOpenDialog={setOpenDialog}
+            isLogoutshow={isLogoutshow}
+            setToken={setToken}
+            setUserInfo={setUserInfo}
+          />
+        ) : (
+          ""
+        )}
 
         <Box
           sx={{
