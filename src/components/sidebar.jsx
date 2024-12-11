@@ -59,17 +59,19 @@ const Sidebar = ({
     setUserInfo(null);
     setOpenDialog(true);
   };
-  console.log("is mobile ", ismobil);
-
+  // useEffect(() => {
+  //   // console.log(window.innerWidth);
+  // }, []);
   return (
     <>
-      <Box padding={2} onMouseLeave={handleMouseLeave}>
+      <Box padding={2} onMouseLeave={ismobil ? undefined : handleMouseLeave}>
         {!ismobil ? (
           <LogOut
             setOpenDialog={setOpenDialog}
             isLogoutshow={isLogoutshow}
             setToken={setToken}
             setUserInfo={setUserInfo}
+            ismobil={ismobil}
           />
         ) : (
           ""
@@ -85,7 +87,7 @@ const Sidebar = ({
         >
           <Avatar
             sx={{ bgcolor: "#FF5722" }}
-            onMouseEnter={handleHover}
+            onMouseEnter={ismobil ? undefined : handleHover}
             style={{ cursor: "pointer" }}
           >
             {userInfo?.name?.charAt(0)}
