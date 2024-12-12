@@ -22,7 +22,6 @@ const Sidebar = ({
   joinRoomChat,
   selectUser,
   createRoom,
-  token,
   setToken,
   setUserInfo,
   setOpenDialog,
@@ -113,69 +112,110 @@ const Sidebar = ({
           {joinedRooms.length > 0 && (
             <>
               <Typography variant="body1">Joined Rooms</Typography>
-              <List>
-                {joinedRooms.map((room) => (
-                  <ListItem
-                    button
-                    key={room?.id}
-                    onClick={() => joinRoomChat(room)}
-                    sx={{
-                      backgroundColor:
-                        currentChat?.id === room?.id ? "#F1F0E8" : "",
-                    }}
-                  >
-                    <ListItemText
-                      primary={room?.name}
-                      sx={{ cursor: "pointer" }}
-                    />
-                  </ListItem>
-                ))}
-              </List>
+              <Box
+                sx={{
+                  height: "200px",
+
+                  overflowY: "auto",
+                  scrollbarWidth: "none",
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
+                }}
+              >
+                <List>
+                  {joinedRooms.map((room) => (
+                    <ListItem
+                      button
+                      key={room?.id}
+                      onClick={() => joinRoomChat(room)}
+                      sx={{
+                        backgroundColor:
+                          currentChat?.id === room?.id ? "#F1F0E8" : "",
+                      }}
+                    >
+                      <ListItemText
+                        primary={room?.name}
+                        sx={{ cursor: "pointer" }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
             </>
           )}
           {otherRooms.length > 0 && (
             <>
               <Typography variant="body1">Other Rooms</Typography>
-              <List>
-                {otherRooms.map((room) => (
+              <Box
+                sx={{
+                  height: "200px",
+
+                  overflowY: "auto",
+                  scrollbarWidth: "none",
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
+                }}
+              >
+                <List>
+                  {otherRooms.map((room) => (
+                    <ListItem
+                      button
+                      key={room?.id}
+                      onClick={() => joinRoom(room)}
+                      sx={{
+                        backgroundColor:
+                          currentChat?.id === room?.id ? "#F1F0E8" : "",
+                      }}
+                    >
+                      <ListItemText
+                        primary={room?.name}
+                        sx={{ cursor: "pointer" }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            </>
+          )}
+        </Box>
+        <>
+          <Typography variant="h6">Users</Typography>
+          <Box
+            sx={{
+              height: "300px",
+
+              overflowY: "auto",
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }}
+          >
+            <List>
+              {users
+                .filter((user) => user.id !== userId)
+                .map((user) => (
+                  // console.log(users),
                   <ListItem
                     button
-                    key={room?.id}
-                    onClick={() => joinRoom(room)}
+                    key={user?.id}
+                    onClick={() => selectUser(user)}
                     sx={{
                       backgroundColor:
-                        currentChat?.id === room?.id ? "#F1F0E8" : "",
+                        currentChat?.id === user?.id ? "#F1F0E8" : "",
                     }}
                   >
                     <ListItemText
-                      primary={room?.name}
+                      primary={user?.name}
                       sx={{ cursor: "pointer" }}
                     />
                   </ListItem>
                 ))}
-              </List>
-            </>
-          )}
-        </Box>
-        <Typography variant="h6">Users</Typography>
-        <List>
-          {users
-            .filter((user) => user.id !== userId)
-            .map((user) => (
-              // console.log(users),
-              <ListItem
-                button
-                key={user?.id}
-                onClick={() => selectUser(user)}
-                sx={{
-                  backgroundColor:
-                    currentChat?.id === user?.id ? "#F1F0E8" : "",
-                }}
-              >
-                <ListItemText primary={user?.name} sx={{ cursor: "pointer" }} />
-              </ListItem>
-            ))}
-        </List>
+            </List>
+          </Box>
+        </>
       </Box>
     </>
   );

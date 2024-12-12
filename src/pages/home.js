@@ -13,15 +13,12 @@ import ChatMessages from "../components/chatpage";
 import { Registration } from "../components/Registration";
 import Login from "../components/Login";
 import Appbar from "../components/Appbar";
-// useNavigte to navigation
-import { useNavigate } from "react-router-dom";
 
 const backendURL = "http://192.168.100.186:5000";
 
 const socket = io(backendURL);
 
 function Home() {
-  const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState(null);
@@ -245,13 +242,7 @@ function Home() {
         );
       });
   };
-  const handleLoginNavigation = (e) => {
-    e.preventDefault();
-    navigate("/login");
-  };
-  const handleRegisterNavigation = () => {
-    navigate("/register");
-  };
+
   // console.log("ismibile", isMobile);
   const handleHovermobile = () => {
     // alert("mobile ui");
@@ -310,6 +301,8 @@ function Home() {
               setUserInfo={setUserInfo}
               setOpenDialog={setOpenDialog}
               ismobil={true}
+              setIsLogoutShow={setIsLogoutShow}
+              isLogoutshow={isLogoutshow}
             />
           </Drawer>
         )}
@@ -330,6 +323,7 @@ function Home() {
               handleHovermobile={handleHovermobile}
               setDrawerOpen={setDrawerOpen}
               handleMouseLeaveMobi={handleMouseLeaveMobi}
+              userInfo={userInfo}
             />
           )}
 
@@ -371,8 +365,6 @@ function Home() {
           setPassword={setPassword}
           LoginUser={LoginUser}
           openDialog={openDialog}
-          // handleLoginNavigation={handleLoginNavigation}
-          // handleRegisterNavigation={handleRegisterNavigation}
         />
       )}
     </>
