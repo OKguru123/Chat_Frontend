@@ -73,14 +73,13 @@ function Home() {
           params: {
             sender_id: storedUserInfo.id,
             recipient_id: currentChat?.type === "user" ? currentChat?.id : "",
-            
+
             room_id: currentChat?.type === "room" ? currentChat?.id : "",
           },
         })
         .then((res) => setMessages(res.data));
     }
 
-    // socket.on("new_user", (user) => setUsers((prev) => [...prev, user]));
     socket.on("new_room", (room) => setRooms((prev) => [...prev, room]));
     socket.on("receive_private_message", (msg) =>
       setMessages((prev) => [...prev, msg])
@@ -205,7 +204,6 @@ function Home() {
   const LoginUser = (e) => {
     const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-
     axios
       .post(`${backendURL}/login`, {
         socketId: socket.id,
@@ -243,13 +241,10 @@ function Home() {
       });
   };
 
-
   const handleHovermobile = () => {
-
     setIsLogoutShow(true);
   };
   const handleMouseLeaveMobi = (e) => {
-   
     setIsLogoutShow(false);
   };
   return (
@@ -338,7 +333,6 @@ function Home() {
           />
         </Box>
       </Box>
-      {/* changes in opendialog registration */}
 
       {isregis ? (
         <Registration
@@ -354,7 +348,7 @@ function Home() {
           setPassword={setPassword}
         />
       ) : (
-        // creating a Login Page 
+        // creating a Login Page
         <Login
           isregis={isregis}
           email={email}

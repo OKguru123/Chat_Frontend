@@ -62,17 +62,6 @@ const Login = ({
           >
             <span>Don't have an account? Register</span>
           </Button>
-
-          {/* <Link
-            to="/register"
-            onClick={() => {
-              setOpenDialog(false);
-              setIsregis(true);
-            }}
-            color="primary"
-          >
-            Don't have an account? Register
-          </Link> */}
         </DialogActions>
       </Dialog>
     </div>
