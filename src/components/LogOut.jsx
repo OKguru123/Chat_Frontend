@@ -8,9 +8,6 @@ const LogOut = ({
   setUserInfo,
   ismobil,
 }) => {
-  //   const handleMouseLeave = () => {
-  //     setIsLogoutShow(false);
-  //   };
   const Logoutuser = () => {
     localStorage.clear();
     setToken("");
@@ -20,10 +17,8 @@ const LogOut = ({
     setOpenDialog(true);
   };
 
-  useEffect(() => {
-    console.log(ismobil);
-  }, [ismobil]);
-  console.log("is logout show value", isLogoutshow);
+  useEffect(() => {}, [ismobil]);
+
   return (
     <div
       style={{
@@ -34,15 +29,12 @@ const LogOut = ({
         alignItems: "center",
         position: "absolute",
         marginTop: "0px",
-        // width: "50%",
 
         height: "50px",
         transition: "300ms",
-        // backgroundColor: "red",
 
         zIndex: "1000",
       }}
-      //   onMouseLeave={handleMouseLeave}
     >
       <button
         style={{

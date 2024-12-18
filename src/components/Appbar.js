@@ -40,7 +40,6 @@ const Appbar = ({
           >
             <Typography variant="h6">Chat App</Typography>
             <Avatar
-              // onMouseLeave={handleMouseLeaveMobi}
               sx={{ bgcolor: "#FF5722" }}
               onMouseEnter={handleHovermobile}
               style={{ cursor: "pointer" }}
