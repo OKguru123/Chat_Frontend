@@ -8,7 +8,7 @@ import { useTheme } from "@mui/material/styles";
 import io from "socket.io-client";
 import axios from "axios";
 import Sidebar from "../components/sidebar";
-import LogOut from "../components/LogOut";
+import LogOut from "../components/Logout";
 import ChatMessages from "../components/chatpage";
 import { Registration } from "../components/Registration";
 import Login from "../components/Login";
