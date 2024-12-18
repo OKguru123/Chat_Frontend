@@ -8,7 +8,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/approve-request" element={<RequestApprovel />} />
+
         </Routes>
       </Router>
 
