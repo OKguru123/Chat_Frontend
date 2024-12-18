@@ -348,6 +348,7 @@ function Home() {
           setPassword={setPassword}
         />
       ) : (
+        // creating a Login Page
         <Login
           isregis={isregis}
           email={email}
