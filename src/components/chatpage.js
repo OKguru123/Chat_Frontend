@@ -22,6 +22,12 @@ const ChatMessages = ({
     scrollToBottom();
   }, [messages]);
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  };
+
   return (
     <Box padding={2} flexGrow={1} display="flex" flexDirection="column">
       <Typography variant="h6" gutterBottom>
@@ -91,6 +97,7 @@ const ChatMessages = ({
           placeholder="Type a message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
         />
         <Button
           variant="contained"
