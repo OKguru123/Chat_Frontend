@@ -8,9 +8,7 @@ const LogOut = ({
   setUserInfo,
   ismobil,
 }) => {
-  //   const handleMouseLeave = () => {
-  //     setIsLogoutShow(false);
-  //   };
+  
   const Logoutuser = () => {
     localStorage.clear();
     setToken("");
@@ -42,7 +40,7 @@ const LogOut = ({
 
         zIndex: "1000",
       }}
-      //   onMouseLeave={handleMouseLeave}
+      
     >
       <button
         style={{
