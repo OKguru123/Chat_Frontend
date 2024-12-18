@@ -31,7 +31,6 @@ const Sidebar = ({
 }) => {
   const [joinedRooms, setJoinedRooms] = useState([]);
   const [otherRooms, serOtherRooms] = useState([]);
-  // const [isLogoutshow, setIsLogoutShow] = useState(false);
 
   useEffect(() => {
     setJoinedRooms(
@@ -46,7 +45,6 @@ const Sidebar = ({
     );
   }, [rooms]);
   const handleHover = () => {
-    // alert("hover on avtar");
     setIsLogoutShow(true);
   };
   const handleMouseLeave = () => {
@@ -58,9 +56,7 @@ const Sidebar = ({
     setUserInfo(null);
     setOpenDialog(true);
   };
-  // useEffect(() => {
-  //   // console.log(window.innerWidth);
-  // }, []);
+
   return (
     <>
       <Box padding={2} onMouseLeave={ismobil ? undefined : handleMouseLeave}>
@@ -197,7 +193,6 @@ const Sidebar = ({
               {users
                 .filter((user) => user.id !== userId)
                 .map((user) => (
-                  // console.log(users),
                   <ListItem
                     button
                     key={user?.id}
