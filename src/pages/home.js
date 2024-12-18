@@ -73,7 +73,7 @@ function Home() {
           params: {
             sender_id: storedUserInfo.id,
             recipient_id: currentChat?.type === "user" ? currentChat?.id : "",
-            // ye kab store hoti he
+            
             room_id: currentChat?.type === "room" ? currentChat?.id : "",
           },
         })
@@ -204,7 +204,7 @@ function Home() {
 
   const LoginUser = (e) => {
     const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-    // e.preventDefault();
+
 
     axios
       .post(`${backendURL}/login`, {
@@ -243,13 +243,13 @@ function Home() {
       });
   };
 
-  // console.log("ismibile", isMobile);
+
   const handleHovermobile = () => {
-    // alert("mobile ui");
+
     setIsLogoutShow(true);
   };
   const handleMouseLeaveMobi = (e) => {
-    // e.stopPropagation();
+   
     setIsLogoutShow(false);
   };
   return (
